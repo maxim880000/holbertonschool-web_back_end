@@ -5,6 +5,7 @@ import random
 
 
 async def async_generator():
-    """Coroutine that loops 10 times with async sleep"""
+    """Coroutine that yields 10 random numbers asynchronously"""
     for _ in range(10):
         await asyncio.sleep(1)
+        yield random.uniform(0, 10)
