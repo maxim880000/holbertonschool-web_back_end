@@ -61,7 +61,7 @@ class Server:
 
     def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         """
-        Retourne un dictionnaire contenant les métadonnées de pagination hypermédia
+        Retourne un dic contenant les métadonnées de pagination hypermédia
         arg
             page: numéro de page (défaut: 1)
             page_size: nombre d'éléments par page (défaut: 10)
