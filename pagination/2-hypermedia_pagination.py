@@ -9,7 +9,7 @@ from typing import List, Dict, Any
 def index_range(page: int, page_size: int) -> tuple:
     """
     Retourne un tuple contenant les index de début et de fin pour
-	arg
+    arg
         page: numéro de page (indexé à partir de 1)
         page_size: nombre d'éléments par page
     return
