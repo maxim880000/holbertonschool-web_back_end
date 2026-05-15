@@ -1,11 +1,11 @@
-// serveur http avec deux routes / et /students
-const http = require('http');
+// version express du serveur complexe avec la route /students
+const express = require('express');
 const fs = require('fs');
 
-// le fichier csv est passe en argument de la commande node
+// le nom du fichier csv vient des arguments de la ligne de commande
 const database = process.argv[2];
 
-// cette fonction lis le csv et retourne les infos sous forme de string
+// fonction qui lis le csv et construit la reponse
 function readStudents(path) {
   return new Promise((resolve, reject) => {
     fs.readFile(path, 'utf8', (err, data) => {
@@ -14,12 +14,12 @@ function readStudents(path) {
         return;
       }
 
-      // on filtre les lignes vides et on skip le header
+      // on enleve les lignes vides et le header csv
       const lines = data.split('\n').filter((line) => line.trim() !== '');
       const students = lines.slice(1);
       const output = [`Number of students: ${students.length}`];
 
-      // on groupe par field pour afficher les stats
+      // on regroupe les prenoms par domaine detude
       const fields = {};
       for (const student of students) {
         const parts = student.split(',');
@@ -33,34 +33,27 @@ function readStudents(path) {
         output.push(`Number of students in ${field}: ${names.length}. List: ${names.join(', ')}`);
       }
 
-      // on join tout en une seule string pour la reponse http
       resolve(output.join('\n'));
     });
   });
 }
 
-const app = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
+const app = express();
 
-  // route principale
-  if (req.url === '/') {
-    res.end('Hello Holberton School!');
-    return;
-  }
+// page daccueil
+app.get('/', (req, res) => {
+  res.send('Hello Holberton School!');
+});
 
-  // route students on lis le csv et on envoie les donnees
-  if (req.url === '/students') {
-    readStudents(database)
-      .then((output) => {
-        res.end(`This is the list of our students\n${output}`);
-      })
-      .catch((err) => {
-        res.end(`This is the list of our students\n${err.message}`);
-      });
-    return;
-  }
-
-  res.end('Hello Holberton School!');
+// route qui affiche la liste des etudiants depuis le csv
+app.get('/students', (req, res) => {
+  readStudents(database)
+    .then((output) => {
+      res.send(`This is the list of our students\n${output}`);
+    })
+    .catch((err) => {
+      res.send(`This is the list of our students\n${err.message}`);
+    });
 });
 
 app.listen(1245);
